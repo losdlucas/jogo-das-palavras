@@ -159,3 +159,28 @@ body.erro {
     opacity: 0.9;
     min-height: 18px;
 }
+
+.difficulty-select {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.difficulty-select select {
+    margin-left: 6px;
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+}
+
+.player-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.level-badge {
+    background: #ff980033;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
