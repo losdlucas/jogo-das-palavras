@@ -8,25 +8,25 @@ const resetBtn = document.getElementById('reset-btn');
 const audioAcerto = document.getElementById('audio-acerto');
 const audioErro = document.getElementById('audio-erro');
 
-const URL_API = 'https://api-palavras-8ptt.onrender.com';
+const playerDisplay = document.getElementById('player-display');
 const levelDisplay = document.getElementById('level-display');
-const difficultyGame = document.getElementById('difficulty-game');
 const historyBox = document.getElementById('history');
+
+const URL_API = 'https://api-palavras-8ptt.onrender.com';
+
 let palavraCorreta = '';
 
 function efeitoFundo(tipo) {
     document.body.classList.remove('acerto', 'erro');
     document.body.classList.add(tipo);
-
-    setTimeout(() => {
-        document.body.classList.remove(tipo);
-    }, 500);
+    setTimeout(() => document.body.classList.remove(tipo), 500);
 }
 
 async function iniciarJogo(event) {
     if (event.key === 'Enter') {
         const nickname = document.getElementById('nickname-input').value;
         const dificuldade = document.getElementById('difficulty').value;
+
         if (!nickname) {
             alert('Preencha o nickname');
             return;
@@ -36,10 +36,10 @@ async function iniciarJogo(event) {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-            nickname: nickname,
-            nivel: dificuldade
-})
+            body: JSON.stringify({
+                nickname: nickname,
+                nivel: dificuldade
+            })
         });
 
         const data = await response.json();
@@ -49,9 +49,13 @@ async function iniciarJogo(event) {
             return;
         }
 
+        // 👉 separa nickname e nível da mensagem da API
+        const partes = data.mensagem.split('Nível:');
+        playerDisplay.innerText = partes[0].trim();
+        levelDisplay.innerText = 'Nível: ' + partes[1].trim();
+
         setupContainer.classList.add('hidden');
         gameContainer.classList.remove('hidden');
-        document.getElementById('player-display').innerText = data.mensagem;
 
         buscarPalavra();
     }
@@ -59,14 +63,12 @@ async function iniciarJogo(event) {
 
 async function buscarPalavra() {
     const response = await fetch(`${URL_API}/status`, {
-        credentials: 'include',
-        method: 'GET'
+        credentials: 'include'
     });
 
     const data = await response.json();
 
-    const hint = document.getElementById('hint');
-    hint.innerText = `Dica: ${data.dica}`;
+    document.getElementById('hint').innerText = `Dica: ${data.dica}`;
 
     wordDisplay.innerHTML = '';
 
@@ -99,17 +101,9 @@ async function tentarLetra(event) {
         const item = document.createElement('div');
         item.classList.add('history-item');
 
-        if (data.posicoes && data.posicoes.length > 0) {
+        if (data.posicoes?.length > 0) {
             item.classList.add('acerto');
             item.innerText = `✔ Letra "${caractere}" — Acerto`;
-        } else {
-            item.classList.add('erro');
-            item.innerText = `✖ Letra "${caractere}" — Erro`;
-        }
-
-        historyBox.prepend(item);
-
-        if (data.posicoes && data.posicoes.length > 0) {
             audioAcerto.play();
             efeitoFundo('acerto');
 
@@ -120,9 +114,13 @@ async function tentarLetra(event) {
                 setTimeout(() => slot.classList.remove('reveal'), 300);
             });
         } else {
+            item.classList.add('erro');
+            item.innerText = `✖ Letra "${caractere}" — Erro`;
             audioErro.play();
             efeitoFundo('erro');
         }
+
+        historyBox.prepend(item);
 
         errorCount.innerText = data.erros_atuais;
         gameMessage.innerText = data.mensagem;
@@ -130,17 +128,14 @@ async function tentarLetra(event) {
         if (data.status_jogo !== 'Jogando') {
             resetBtn.classList.remove('hidden');
 
-            // ✅ AQUI a palavra vem da API quando o jogo termina
-            if (data.palavra) {
-                palavraCorreta = data.palavra;
-            }
+            if (data.palavra) palavraCorreta = data.palavra;
 
             if (data.status_jogo === 'Derrota') {
                 gameMessage.style.color = '#ff4d4d';
-                gameMessage.innerText = `${data.mensagem} | A palavra era: ${palavraCorreta}`;
+                gameMessage.innerText =
+                    `${data.mensagem} | A palavra era: ${palavraCorreta}`;
             } else {
                 gameMessage.style.color = '#00ff88';
-                gameMessage.innerText = data.mensagem;
             }
         }
     }
