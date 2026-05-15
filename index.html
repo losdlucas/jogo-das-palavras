@@ -16,7 +16,14 @@
         <!-- TELA INICIAL -->
         <div id="setup-container" class="setup">
             <input onkeydown="iniciarJogo(event)" type="text" id="nickname-input" placeholder="Digite seu nickname...">
-
+            <div class="difficulty-select">
+    <label for="difficulty">Dificuldade:</label>
+    <select id="difficulty">
+        <option value="facil">Fácil</option>
+        <option value="medio">Médio</option>
+        <option value="dificil">Difícil</option>
+    </select>
+</div>
             <p class="credit">Desenvolvido por Lucas Oliveira</p>
         </div>
 
@@ -24,8 +31,10 @@
         <div id="game-container" class="hidden">
 
             <div class="hud">
-                <span id="player-display" class="player-badge"></span>
-                <span class="errors">Erros: <b id="error-count">0</b> / 4</span>
+<div class="player-info">
+    <span id="player-display" class="player-badge"></span>
+    <span id="level-display" class="level-badge"></span>
+</div>                <span class="errors">Erros: <b id="error-count">0</b> / 4</span>
             </div>
 
             <p id="hint" class="hint-box"></p>
