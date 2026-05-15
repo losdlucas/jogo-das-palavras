@@ -9,7 +9,7 @@ const audioAcerto = document.getElementById('audio-acerto');
 const audioErro = document.getElementById('audio-erro');
 
 const URL_API = 'https://api-palavras-8ptt.onrender.com';
-
+const levelDisplay = document.getElementById('level-display');
 const historyBox = document.getElementById('history');
 let palavraCorreta = '';
 
@@ -25,7 +25,7 @@ function efeitoFundo(tipo) {
 async function iniciarJogo(event) {
     if (event.key === 'Enter') {
         const nickname = document.getElementById('nickname-input').value;
-
+        const dificuldade = document.getElementById('difficulty').value;
         if (!nickname) {
             alert('Preencha o nickname');
             return;
@@ -35,7 +35,10 @@ async function iniciarJogo(event) {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nickname })
+            body: JSON.stringify({ 
+            nickname: nickname,
+            nivel: dificuldade
+})
         });
 
         const data = await response.json();
