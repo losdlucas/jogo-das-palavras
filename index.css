@@ -184,3 +184,16 @@ body.erro {
     border-radius: 20px;
     font-size: 12px;
 }
+
+.player-bar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#difficulty-game{
+    color: #00ffff;
+    font-weight: bold;
+    font-size: 14px;
+}
