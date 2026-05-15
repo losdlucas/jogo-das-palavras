@@ -62,8 +62,6 @@ async function buscarPalavra() {
 
     const data = await response.json();
 
-    palavraCorreta = data.palavra;
-
     const hint = document.getElementById('hint');
     hint.innerText = `Dica: ${data.dica}`;
 
@@ -127,16 +125,22 @@ async function tentarLetra(event) {
         errorCount.innerText = data.erros_atuais
         gameMessage.innerText = data.mensagem
 
-        if (data.status_jogo !== 'Jogando') {
-            resetBtn.classList.remove('hidden');
-
-            if (data.status_jogo === 'Derrota') {
-                gameMessage.style.color = '#ff4d4d';
-                gameMessage.innerText = `${data.mensagem} | A palavra era: ${palavraCorreta}`;
-            } else {
-                gameMessage.style.color = '#00ff88';
-                gameMessage.innerText = data.mensagem;
-            }
+       if (data.status_jogo !== 'Jogando') {
+        resetBtn.classList.remove('hidden');
+    
+        // 👉 AQUI salva a palavra correta vinda da API
+        if (data.palavra) {
+            palavraCorreta = data.palavra;
+        }
+    
+        if (data.status_jogo === 'Derrota') {
+            gameMessage.style.color = '#ff4d4d';
+            gameMessage.innerText = `${data.mensagem} | A palavra era: ${palavraCorreta}`;
+        } else {
+            gameMessage.style.color = '#00ff88';
+            gameMessage.innerText = data.mensagem;
+        }
+}
         }
     }
 }
