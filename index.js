@@ -10,6 +10,7 @@ const audioErro = document.getElementById('audio-erro');
 
 const URL_API = 'https://api-palavras-8ptt.onrender.com';
 const levelDisplay = document.getElementById('level-display');
+const difficultyGame = document.getElementById('difficulty-game');
 const historyBox = document.getElementById('history');
 let palavraCorreta = '';
 
