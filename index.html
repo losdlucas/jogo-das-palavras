@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo das Palavras</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+
+    <div class="game-card">
+        <h1 class="title">🧠 Jogo das Palavras</h1>
+
+        <!-- TELA INICIAL -->
+        <div id="setup-container" class="setup">
+            <input onkeydown="iniciarJogo(event)" type="text" id="nickname-input" placeholder="Digite seu nickname...">
+
+            <p class="credit">Desenvolvido por Lucas Oliveira</p>
+        </div>
+
+        <!-- TELA DO JOGO -->
+        <div id="game-container" class="hidden">
+
+            <div class="hud">
+                <span id="player-display" class="player-badge"></span>
+                <span class="errors">Erros: <b id="error-count">0</b> / 4</span>
+            </div>
+
+            <p id="hint" class="hint-box"></p>
+
+            <!-- ESPAÇOS DA PALAVRA -->
+            <div id="word-display" class="word-slots"></div>
+
+            <!-- INPUT DA LETRA -->
+            <input onkeydown="tentarLetra(event)" type="text" id="letter-input" maxlength="1" placeholder="?">
+
+            <!-- HISTÓRICO / DICAS -->
+            <div id="history" class="history-box"></div>
+
+            <!-- MENSAGEM DO JOGO -->
+            <p id="game-message"></p>
+
+            <button onclick="reiniciarJogo()" id="reset-btn" class="hidden">
+                Jogar Novamente
+            </button>
+        </div>
+    </div>
+
+    <!-- Áudios -->
+    <audio id="audio-acerto" src="acerto.mp3"></audio>
+    <audio id="audio-erro" src="erro.mp3"></audio>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
