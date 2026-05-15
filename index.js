@@ -8,24 +8,28 @@ const resetBtn = document.getElementById('reset-btn');
 const audioAcerto = document.getElementById('audio-acerto');
 const audioErro = document.getElementById('audio-erro');
 
-const playerDisplay = document.getElementById('player-display');
+const URL_API = 'https://api-palavras-8ptt.onrender.com';
+
 const levelDisplay = document.getElementById('level-display');
 const historyBox = document.getElementById('history');
 
-const URL_API = 'https://api-palavras-8ptt.onrender.com';
-
 let palavraCorreta = '';
+let dificuldadeEscolhida = '';
 
 function efeitoFundo(tipo) {
     document.body.classList.remove('acerto', 'erro');
     document.body.classList.add(tipo);
-    setTimeout(() => document.body.classList.remove(tipo), 500);
+
+    setTimeout(() => {
+        document.body.classList.remove(tipo);
+    }, 500);
 }
 
 async function iniciarJogo(event) {
     if (event.key === 'Enter') {
         const nickname = document.getElementById('nickname-input').value;
         const dificuldade = document.getElementById('difficulty').value;
+        dificuldadeEscolhida = dificuldade;
 
         if (!nickname) {
             alert('Preencha o nickname');
@@ -36,7 +40,7 @@ async function iniciarJogo(event) {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+            body: JSON.stringify({ 
                 nickname: nickname,
                 nivel: dificuldade
             })
@@ -49,13 +53,11 @@ async function iniciarJogo(event) {
             return;
         }
 
-        // 👉 separa nickname e nível da mensagem da API
-        const partes = data.mensagem.split('Nível:');
-        playerDisplay.innerText = partes[0].trim();
-        levelDisplay.innerText = 'Nível: ' + partes[1].trim();
-
         setupContainer.classList.add('hidden');
         gameContainer.classList.remove('hidden');
+
+        document.getElementById('player-display').innerText = data.mensagem;
+        levelDisplay.innerText = "Nível: " + dificuldadeEscolhida;
 
         buscarPalavra();
     }
@@ -63,7 +65,8 @@ async function iniciarJogo(event) {
 
 async function buscarPalavra() {
     const response = await fetch(`${URL_API}/status`, {
-        credentials: 'include'
+        credentials: 'include',
+        method: 'GET'
     });
 
     const data = await response.json();
@@ -99,10 +102,8 @@ async function tentarLetra(event) {
         const data = await response.json();
 
         const item = document.createElement('div');
-        item.classList.add('history-item');
 
-        if (data.posicoes?.length > 0) {
-            item.classList.add('acerto');
+        if (data.posicoes && data.posicoes.length > 0) {
             item.innerText = `✔ Letra "${caractere}" — Acerto`;
             audioAcerto.play();
             efeitoFundo('acerto');
@@ -110,11 +111,8 @@ async function tentarLetra(event) {
             data.posicoes.forEach(pos => {
                 const slot = document.getElementById(`slot-${pos}`);
                 slot.innerText = caractere;
-                slot.classList.add('reveal');
-                setTimeout(() => slot.classList.remove('reveal'), 300);
             });
         } else {
-            item.classList.add('erro');
             item.innerText = `✖ Letra "${caractere}" — Erro`;
             audioErro.play();
             efeitoFundo('erro');
@@ -128,12 +126,13 @@ async function tentarLetra(event) {
         if (data.status_jogo !== 'Jogando') {
             resetBtn.classList.remove('hidden');
 
-            if (data.palavra) palavraCorreta = data.palavra;
+            if (data.palavra) {
+                palavraCorreta = data.palavra;
+            }
 
             if (data.status_jogo === 'Derrota') {
                 gameMessage.style.color = '#ff4d4d';
-                gameMessage.innerText =
-                    `${data.mensagem} | A palavra era: ${palavraCorreta}`;
+                gameMessage.innerText = `${data.mensagem} | A palavra era: ${palavraCorreta}`;
             } else {
                 gameMessage.style.color = '#00ff88';
             }
